@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "721444744465",
+    "project_id": "attendance-d3a8e",
+    "storage_bucket": "attendance-d3a8e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:721444744465:android:d6ea01851dad28b58130b0",
+        "android_client_info": {
+          "package_name": "com.example.uniben_attendance_lect"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "721444744465-2ma62e3a7ujtstjo6fqn534kn4av5mh3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC3fgrZiDjEhXyg0R0zq98ChojeFh9LAKQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "721444744465-2ma62e3a7ujtstjo6fqn534kn4av5mh3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

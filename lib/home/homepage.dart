@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -167,7 +168,8 @@ class _HomePageState extends State<HomePage> {
                                               splashColor: Colors.green,
                                               borderRadius: BorderRadius.circular(8),
                                               onTap: (){
-                                                Navigator.of(context).push(MaterialPageRoute(builder: (_) => GenerateCode())).then((obj){
+                                                Navigator.of(context).push(MaterialPageRoute(builder: (_)
+                                                => GenerateCode())).then((obj){
                                                   setState(() {
                                                     if(obj == null)
                                                       return;
@@ -235,132 +237,201 @@ class _HomePageState extends State<HomePage> {
                           ],
                         )
                     ),
-                    Container(
-                        child: Column(
-                            children: [
-                              Container(
-                                  margin: const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 16),
-                                  child: Row(
-                                    children: [
-                                      Text('Session:   '),
-                                      DropdownButton<String>(
-                                        value: session,
-                                        items: <String>['2019/2020', '2020/2021', '2021/2022', '2022/2023', '2023/2024'].map((String value) {
-                                          return DropdownMenuItem<String>(
-                                            value: value,
-                                            child: Text(value),
-                                          );
-                                        }).toList(),
-                                        onChanged: (value) {
-                                          setState(() {
-                                            session = value;
-                                            futureLectures = fetchLectures(session, semester);
-                                            fetchingData = true;
-                                          });
-                                          // save the selected course details to shared preferences
-                                        },
-                                      ),
 
-                                      Container(margin: const EdgeInsets.only(
-                                        left: 20
-                                      )),
+                    SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          Container(
+                              margin: const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 16),
+                              child: Row(
+                                children: [
+                                  Text('Session:   '),
+                                  DropdownButton<String>(
+                                    value: session,
+                                    items: <String>['2019/2020', '2020/2021', '2021/2022', '2022/2023', '2023/2024'].map((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        session = value;
+                                        fetchingData = true;
+                                      });
+                                      // save the selected course details to shared preferences
+                                    },
+                                  ),
 
-                                      Text('Semester:   '),
-                                      DropdownButton<String>(
-                                        value: semester == '1' ? '${semester}st' : '${semester}nd',
-                                        items: <String>['1st', '2nd'].map((String value) {
-                                          return DropdownMenuItem<String>(
-                                            value: value,
-                                            child: Text(value),
-                                          );
-                                        }).toList(),
-                                        onChanged: (value) {
-                                          setState(() {
-                                            semester = value[0];
-                                            futureLectures = fetchLectures(session, semester);
-                                            fetchingData = true;
-                                          });
-                                          // save the selected course details to shared preferences
-                                        },
-                                      ),
+                                  Container(margin: const EdgeInsets.only(
+                                      left: 20
+                                  )),
 
-                                      fetchingData ? Align(
-                                        alignment: Alignment.topRight,
-                                        child: Center(
+                                  Text('Semester:   '),
+                                  DropdownButton<String>(
+                                    value: semester == '1' ? '${semester}st' : '${semester}nd',
+                                    items: <String>['1st', '2nd'].map((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        semester = value[0];
+                                        fetchingData = true;
+                                      });
+                                      // save the selected course details to shared preferences
+                                    },
+                                  ),
+
+                                  fetchingData ? Align(
+                                      alignment: Alignment.topRight,
+                                      child: Center(
                                           child: Container(
                                             margin: const EdgeInsets.only(left: 20),
                                             height: 20,
                                             width: 20,
                                             // child: CircularProgressIndicator()
                                           )
-                                        )
-                                      ) : Container(height: 0, width: 0)
-                                    ],
-                                  )
-                              ),
-                              Expanded(
-                                  child: FutureBuilder<List<Lecture>>(
-                                    future: futureLectures,
-                                    builder: (context, snapshot){
-                                      if(snapshot.data != null && snapshot.data.isEmpty){
-                                        fetchingData = false;
-                                        return Center(
-                                          child: Container(
-                                            margin: const EdgeInsets.only(
-                                              left: 16,
-                                              right: 16,
-                                            ),
-                                            child: Text('You had no lecturers in the $semester${semester == '1' ? 'st' : 'nd'} semester of $session session',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle())
-                                          )
-                                        );
-                                      }
-                                      if(snapshot.hasData){
-                                        fetchingData = false;
-                                        return ListView.builder(
-                                          itemCount: snapshot.data.length,
-                                          itemBuilder: (context, index){
-                                            return ListTile(
-                                              title: Text(snapshot.data[index].courseCode),
-                                              subtitle: Text(snapshot.data[index].courseName),
-                                              trailing: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Text('${DateFormat.yMEd().add_jms().format(DateTime.fromMillisecondsSinceEpoch(int.parse(snapshot.data[index].createdAt)))}',
-                                                  style: TextStyle(fontSize: 12),),
-                                                  Row(
-                                                    mainAxisSize: MainAxisSize.min,
-                                                    children: [
-                                                      Icon(Icons.group, color: Colors.green,),
-                                                      Container(margin: const EdgeInsets.only(left: 8),),
-                                                      Text('${snapshot.data[index].attendees.length}')
-                                                    ],
-                                                  )
-                                                ],
-                                              ),
-                                              onTap: (){
-                                                Navigator.of(context).push(MaterialPageRoute(builder: (_)=> LectureAttendees(attendees: snapshot.data[index].attendees)));
-                                              },
-                                            );
-                                          },
-                                        );
-                                      } else if (snapshot.hasError) {
-                                        setState(() {
-                                          fetchingData = false;
-                                        });
-                                        return Text('${snapshot.error}');
-                                      }
-
-                                      // By default, show a loading spinner.
-                                      return Center(
-                                        child: const CircularProgressIndicator(),
-                                      );
-                                    }
-                                  )
+                                      )
+                                  ) : Container(height: 0, width: 0)
+                                ],
                               )
-                            ],
-                        )
+                          ),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height,
+                            child: StreamBuilder(
+                              stream:  FirebaseFirestore.instance
+                                  .collection('lecturers')
+                                  .doc(auth.currentUser.uid)
+                                  .snapshots(),
+                              builder: (context,AsyncSnapshot<DocumentSnapshot> snapshot) {
+                                if(snapshot.hasData){
+                                  fetchingData = false;
+                                  DocumentSnapshot docSna = snapshot.data;
+                                  List<dynamic> map = docSna['generateLecture'];
+                                  return ListView.builder(
+                                    itemCount: map.length,
+                                    itemBuilder: (context, index){
+                                      return ListTile(
+                                        title: Text(map[index]['course_code']),
+                                        subtitle: Text(map[index]['course_name']),
+                                        trailing: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(DateFormat.yMEd().add_jms().format(DateTime.fromMillisecondsSinceEpoch(map[index]['createdAt'])),
+                                              style: const TextStyle(fontSize: 12),),
+                                            Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                const Icon(Icons.group, color: Colors.green,),
+                                                Container(margin: const EdgeInsets.only(left: 8),),
+                                                Text('${map[index]['attendees'].length}')
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                        onTap: (){
+                                          Navigator.of(context).push(MaterialPageRoute(builder: (_)=> LectureAttendees(attendees: map[index]['attendees'])));
+                                        },
+                                      );
+                                    },
+                                  );
+                                }
+                                else if (snapshot.hasError){
+                                  setState(() {
+                                    fetchingData = false;
+                                  });
+                                  return Text('${snapshot.error}');
+                                }
+                                if(!snapshot.hasData){
+                                  return Center(
+                                      child: Container(
+                                          margin: const EdgeInsets.only(
+                                            left: 16,
+                                            right: 16,
+                                          ),
+                                          child: Text('You had no lecturers in the $semester${semester == '1' ? 'st' : 'nd'} semester of $session session',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle())
+                                      )
+                                  );
+                                }
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                                // return Container(
+                                //     child: Column(
+                                //         children: [
+                                //
+                                //           FutureBuilder<List<Lecture>>(
+                                //             future: futureLectures,
+                                //             builder: (context, snapshot){
+                                //               if(snapshot.data != null && snapshot.data.isEmpty){
+                                //                 fetchingData = false;
+                                //                 return Center(
+                                //                   child: Container(
+                                //                     margin: const EdgeInsets.only(
+                                //                       left: 16,
+                                //                       right: 16,
+                                //                     ),
+                                //                     child: Text('You had no lecturers in the $semester${semester == '1' ? 'st' : 'nd'} semester of $session session',
+                                //                         textAlign: TextAlign.center,
+                                //                         style: TextStyle())
+                                //                   )
+                                //                 );
+                                //               }
+                                //               if(snapshot.hasData){
+                                //                 fetchingData = false;
+                                //                 return ListView.builder(
+                                //                   itemCount: snapshot.data.length,
+                                //                   itemBuilder: (context, index){
+                                //                     return ListTile(
+                                //                       title: Text(snapshot.data[index].courseCode),
+                                //                       subtitle: Text(snapshot.data[index].courseName),
+                                //                       trailing: Column(
+                                //                         mainAxisSize: MainAxisSize.min,
+                                //                         children: [
+                                //                           Text('${DateFormat.yMEd().add_jms().format(DateTime.fromMillisecondsSinceEpoch(int.parse(snapshot.data[index].createdAt)))}',
+                                //                           style: TextStyle(fontSize: 12),),
+                                //                           Row(
+                                //                             mainAxisSize: MainAxisSize.min,
+                                //                             children: [
+                                //                               Icon(Icons.group, color: Colors.green,),
+                                //                               Container(margin: const EdgeInsets.only(left: 8),),
+                                //                               Text('${snapshot.data[index].attendees.length}')
+                                //                             ],
+                                //                           )
+                                //                         ],
+                                //                       ),
+                                //                       onTap: (){
+                                //                         Navigator.of(context).push(MaterialPageRoute(builder: (_)=> LectureAttendees(attendees: snapshot.data[index].attendees)));
+                                //                       },
+                                //                     );
+                                //                   },
+                                //                 );
+                                //               } else if (snapshot.hasError) {
+                                //                 setState(() {
+                                //                   fetchingData = false;
+                                //                 });
+                                //                 return Text('${snapshot.error}');
+                                //               }
+                                //
+                                //               // By default, show a loading spinner.
+                                //               return Center(
+                                //                 child: const CircularProgressIndicator(),
+                                //               );
+                                //             }
+                                //           )
+                                //         ],
+                                //     )
+                                // );
+                              }
+                            ),
+                          ),
+                        ],
+                      ),
                     )
                   ],
                 )

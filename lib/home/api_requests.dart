@@ -1,10 +1,15 @@
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uniben_attendance_lect/models/Lecture.dart';
 import 'package:uniben_attendance_lect/models/course.dart';
 import 'package:http/http.dart' as http;
 import 'package:uniben_attendance_lect/models/student.dart';
+
+final FirebaseAuth auth = FirebaseAuth.instance;
+String userId = auth.currentUser.uid;
 
 Future<List<Course>> fetchCourses() async {
   SharedPreferences pref = await SharedPreferences.getInstance();
@@ -41,38 +46,18 @@ Future<List<Course>> fetchCourses() async {
 }
 
 // function to fetch the code from db
-fetchCode(setStateCallback, selectedCourse, duration, context, session, semester) async {
+fetchCode(setStateCallback,List<Map<String,dynamic>>generateLecture, selectedCourse, duration, context, session, semester) async {
   setStateCallback();
-  // handle error checks
-  SharedPreferences pref = await SharedPreferences.getInstance();
-  String token = pref.getString('token');
-
-  http.Client client = http.Client();
   try{
-    http.Response response = await client.post(
-        Uri.https('serene-harbor-85025.herokuapp.com', '/lecturers/generatelecture'),
-        body: json.encode({
-          "token": token,
-          "course_id": selectedCourse.courseId,
-          "duration": duration,
-          "course_name": selectedCourse.title,
-          "course_code": selectedCourse.courseCode,
-          "session": session,
-          "semester": semester
-        }),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-    );
-    dynamic decodedResponse = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
-    if(decodedResponse['status'] == 'ok'){
-      Navigator.of(context).pop({
-        'lectureToken': decodedResponse['lectureToken'],
-        'duration': duration
-      });
-    }else{
-      print(decodedResponse['msg']);
-    }
+    FirebaseFirestore.instance.collection('lecturers').doc(userId).update({
+      'generateLecture': generateLecture,
+    });
+      // Navigator.of(context).pop();
+
+    Navigator.of(context).pop({
+      'lectureToken': generateLecture.last['lecturerId'],
+      'duration': duration
+    });
     //print(decodedResponse);
   }catch(e){
     print(e);
@@ -116,31 +101,19 @@ Future<List<Lecture>> fetchLectures(session, semester) async {
 }
 
 //async function to get an individual student's data
-fetchStudent(studentId) async {
-  SharedPreferences pref = await SharedPreferences.getInstance();
-  String token = pref.getString('token');
-
-  http.Client client = http.Client();
-  try{
-    http.Response response = await client.post(
-        Uri.https('serene-harbor-85025.herokuapp.com', '/lecturers/getstudent'),
-      body: json.encode({
-        "token": token,
-        "student_id": studentId
-      }),
-      headers: {
-          'Content-Type': 'application/json'
-      }
-    );
-    dynamic decodedResponse = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
-    if(decodedResponse['status'] == 'ok'){
-        Student student = Student.fromJson(decodedResponse['student']);
-        return student;
-    }else{
-      print(decodedResponse['msg']);
-    }
-  }catch(e){
-    print(e);
-  }
-
-}
+// fetchStudent(studentId) async {
+//   SharedPreferences pref = await SharedPreferences.getInstance();
+//   String token = pref.getString('token');
+//   FirebaseFirestore.instance
+//       .collection('students')
+//       .doc(studentId)
+//       .get();
+//   try{
+//
+//         Student student = Student.fromJson(decodedResponse['student']);
+//         return student;
+//   }catch(e){
+//     print(e);
+//   }
+//
+// }

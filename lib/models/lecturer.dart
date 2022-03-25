@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Lecturer{
   final String id;
   final List lectures;
@@ -16,5 +18,13 @@ class Lecturer{
       name: json['name']
     );
   }
-
+  factory Lecturer.fromSnap(DocumentSnapshot snapshot){
+    return Lecturer(
+        id: snapshot['id'],
+        lectures: snapshot['lectures'],
+        email: snapshot['email'],
+        username: snapshot['username']??'',
+        name: snapshot['name']??''
+    );
+  }
 }

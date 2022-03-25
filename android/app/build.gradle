@@ -26,7 +26,7 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    compileSdkVersion flutter.compileSdkVersion
+    compileSdkVersion 31
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -44,10 +44,11 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.example.uniben_attendance_lect"
-        minSdkVersion flutter.minSdkVersion
-        targetSdkVersion flutter.targetSdkVersion
+        minSdkVersion 21
+        targetSdkVersion 31
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -66,3 +67,21 @@ flutter {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
+
+dependencies {
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test:runner:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+    implementation "androidx.core:core:1.0.1"
+
+    implementation 'com.google.firebase:firebase-auth:19.3.1'
+    implementation 'com.google.firebase:firebase-database:19.3.0'
+    implementation 'com.google.firebase:firebase-firestore:21.4.0'
+
+    implementation 'com.google.firebase:firebase-storage:19.1.1'
+    implementation 'com.google.firebase:firebase-messaging:21.0.1'
+}
+
+apply plugin: 'com.google.gms.google-services'
+googleServices { disableVersionCheck = true }
+

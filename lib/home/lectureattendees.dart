@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:uniben_attendance_lect/home/api_requests.dart';
 class LectureAttendees extends StatefulWidget {
@@ -32,12 +33,15 @@ class _LectureAttendeesState extends State<LectureAttendees> {
           physics: AlwaysScrollableScrollPhysics(),
           itemBuilder: (context, index){
             return FutureBuilder(
-              future: fetchStudent(widget.attendees[index]['student_id']),
+              future:  FirebaseFirestore.instance
+                    .collection('students')
+                .doc(widget.attendees[index])
+                .get(),
               builder: (context, snap){
                 if(snap.hasData){
                   return ListTile(
-                    title: Text('${snap.data.firstname} ${snap.data.lastname}'),
-                    subtitle: Text('Mat No: ${snap.data.matricNo}'),
+                    title: Text('${snap.data['firstname']} ${snap.data['lastname']}'),
+                    subtitle: Text('Mat No: ${snap.data['matricNo']}'),
                   );
                 }else if(snap.hasError){
                   return Text('${snap.error}');
