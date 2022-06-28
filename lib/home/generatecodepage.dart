@@ -1,47 +1,67 @@
-import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:uniben_attendance_lect/models/course.dart';
 import 'package:uuid/uuid.dart';
 import 'api_requests.dart';
 
 class GenerateCode extends StatefulWidget {
+  const GenerateCode({Key? key}) : super(key: key);
+
   @override
   _GenerateCodeState createState() => _GenerateCodeState();
 }
 
 class _GenerateCodeState extends State<GenerateCode> {
-  List<Course> futureCourses;
+  List<Course>? futureCourses = [];
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    // futureCourses = fetchCourses();
+    fetchCourses();
     fetch();
   }
 
-  Course selectedCourse;
+  Course? selectedCourse;
   String duration = '1';
   String semester = '1';
+  String semesterD= '1st Semester';
+  String initialLevel = '100';
+  String level = '100 Level';
   String session = '2020/2021';
   bool isLoading = false;
   List<Map<String,dynamic>> generateLecture = [];
+   fetchCourses() {
+     FirebaseFirestore.instance.collection('courses')
+        .doc('300 Level ')
+        .collection('1st Semester').get().then((snapshot){
+          print(snapshot.docs.length);
+    });
+    List<Course> course = [];
+    // course.add(Course.fromSnap(snapshot));
+    // snapshot.docs.map((e) {
+    // }).toList();
+    // return course;
+  }
   fetch() async {
     FirebaseAuth auth = FirebaseAuth.instance;
     setState(() {
       isLoading  = true;
 
     });
+
+     fetchCourses();
     print('here');
     FirebaseFirestore.instance
         .collection('lecturers')
-        .doc(auth.currentUser.uid)
+        .doc(auth.currentUser!.uid)
         .get().then((DocumentSnapshot value) {
           print(value);
 
           List va = value['generateLecture'];
-          va.forEach((element) {
+          for (var element in va) {
             generateLecture.add ({
               "course_id": element['course_id'],
               "duration": element['duration'],
@@ -54,10 +74,11 @@ class _GenerateCodeState extends State<GenerateCode> {
               'createdAt':element['createdAt'],
               'lecturerId':element['lecturerId']
             });
-          });
+          }
           print(generateLecture);
-          Course course = Course.fromSnap(value['courses'][0]);
-          futureCourses = [course];
+          ///work ont course
+          ///
+
           setState(() {
             isLoading = false;
           });
@@ -70,7 +91,7 @@ class _GenerateCodeState extends State<GenerateCode> {
     return Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          title: Text('Create Lecture'),
+          title: const Text('Create Lecture'),
           leading: BackButton(
             onPressed: isLoading
                 ? null
@@ -79,39 +100,18 @@ class _GenerateCodeState extends State<GenerateCode> {
                   },
           ),
         ),
-        body: isLoading ? Center(child: const CircularProgressIndicator(),):Column(
+        body: isLoading ? const Center(child: CircularProgressIndicator(),):Column(
           children: [
+
             Container(
                 margin: const EdgeInsets.only(top: 10, left: 16, right: 16),
                 child: Row(
                   children: [
-                    Text('Select course:   '),
-                    DropdownButton<Course>(
-                      value: selectedCourse,
-                      // set default text to be the most recent selction
-                      items:[
-                     DropdownMenuItem<Course>(
-                    value: futureCourses[0],
-                      child: Text(futureCourses[0].title.toString()),
-                    )
-                      ],
-                      onChanged: (course) {
-                        selectedCourse = course;
-                        setState(() {});
-                        // save the selected course details to shared preferences
-                      },
-                    )
-                  ],
-                )),
-            Container(
-                margin: const EdgeInsets.only(top: 10, left: 16, right: 16),
-                child: Row(
-                  children: [
-                    Text('lecture code duration:   '),
+                    const Text('Level:   '),
                     DropdownButton<String>(
-                      value: duration,
+                      value: initialLevel,
                       items:
-                          <String>['1', '2', '3', '4', '5'].map((String value) {
+                      <String>['100','200','300','400'].map((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
                           child: Text(value),
@@ -119,20 +119,99 @@ class _GenerateCodeState extends State<GenerateCode> {
                       }).toList(),
                       onChanged: (value) {
                         setState(() {
-                          duration = value;
+                          level = value! + ' Level';
+                          initialLevel = value;
                         });
 
                         // save the selected course details to shared preferences
                       },
                     ),
-                    Text('   Min(s)')
+
                   ],
                 )),
             Container(
                 margin: const EdgeInsets.only(top: 10, left: 16, right: 16),
                 child: Row(
                   children: [
-                    Text('Session:  '),
+                    const Text('Select course:   '),
+                  selectedCourse == null ?  StreamBuilder(
+                      stream:  FirebaseFirestore.instance.collection('courses')
+                          .doc(level)
+                          .collection(semesterD).snapshots(),
+                      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+
+                        if(snapshot.hasData ){
+                          futureCourses!.clear();
+                          snapshot.data!.docs.map((elemnt){
+                            print(elemnt.data());
+                            futureCourses!.add(Course.fromSnap(elemnt));
+                            print(futureCourses!.last.courseCode);
+                          }).toList();
+                          return DropdownButton<Course>(
+                            value: selectedCourse,
+                            // set default text to be the most recent selction
+                            // items: [
+                            // DropdownMenuItem<Course>(
+                            //   value: futureCourses![0],
+                            //   child: Text(futureCourses![0].title.toString()),
+                            // )
+                            // ],
+                            items:futureCourses!.map((e) => DropdownMenuItem<Course>(
+                              value: e,
+                              child: Text(e.title.toString()),
+                            )).toList(),
+                            onChanged: (course) {
+                              selectedCourse = course;
+                              setState(() {});
+                              // save the selected course details to shared preferences
+                            },
+                          );
+                        }else{
+                          return const SizedBox();
+                        }
+
+                      },
+
+                    )
+                      : GestureDetector(
+                      onTap: (){
+                        setState(() {
+                          selectedCourse = null;
+                        });
+                      },
+                      child: Text(selectedCourse!.title!,))
+                  ],
+                )),
+            Container(
+                margin: const EdgeInsets.only(top: 10, left: 16, right: 16),
+                child: Row(
+                  children: [
+                    const Text('lecture code duration:   '),
+                    DropdownButton<String>(
+                      value: duration,
+                      items:
+                          <String>['1', '2', '3', '4', '5','10','15','30','60'].map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          duration = value!;
+                        });
+
+                        // save the selected course details to shared preferences
+                      },
+                    ),
+                    const Text('   Min(s)')
+                  ],
+                )),
+            Container(
+                margin: const EdgeInsets.only(top: 10, left: 16, right: 16),
+                child: Row(
+                  children: [
+                    const Text('Session:  '),
                     DropdownButton<String>(
                       value: session,
                       items: <String>[
@@ -149,12 +228,12 @@ class _GenerateCodeState extends State<GenerateCode> {
                       }).toList(),
                       onChanged: (value) {
                         setState(() {
-                          session = value;
+                          session = value!;
                         });
                         // save the selected course details to shared preferences
                       },
                     ),
-                    Text('    Semester  '),
+                    const Text('    Semester  '),
                     DropdownButton<String>(
                       value:
                           semester == '1' ? '${semester}st' : '${semester}nd',
@@ -166,7 +245,8 @@ class _GenerateCodeState extends State<GenerateCode> {
                       }).toList(),
                       onChanged: (value) {
                         setState(() {
-                          semester = value[0];
+                          semester = value![0];
+                          semesterD = value == '1st' ? '1st Semester' : '2nd Semester';
                         });
                         // save the selected course details to shared preferences
                       },
@@ -174,7 +254,7 @@ class _GenerateCodeState extends State<GenerateCode> {
                   ],
                 )),
             isLoading
-                ? CircularProgressIndicator()
+                ? const CircularProgressIndicator()
                 : Container(
                     margin: const EdgeInsets.only(top: 16),
                     child: MaterialButton(
@@ -182,15 +262,15 @@ class _GenerateCodeState extends State<GenerateCode> {
                       onPressed: () {
                         generateLecture.add(
                             {
-                              "course_id": selectedCourse.courseId,
+                              "course_id": selectedCourse!.courseId,
                               'generatedUI':const Uuid().v4(),
                               "duration": duration,
-                              "course_name": selectedCourse.title,
-                              "course_code": selectedCourse.courseCode,
+                              "course_name": selectedCourse!.title,
+                              "course_code": selectedCourse!.courseCode,
                               "session": session,
                               "semester": semester,
                               'attendees':[],
-                              'lecturerId':auth.currentUser.uid,
+                              'lecturerId':auth.currentUser!.uid,
                               'createdAt':DateTime.now().millisecondsSinceEpoch
                             }
                         );
@@ -203,8 +283,8 @@ class _GenerateCodeState extends State<GenerateCode> {
                             semester);
                       },
                       child:
-                          Text('Finish', style: TextStyle(color: Colors.white)),
-                    ))
+                          const Text('Finish', style: TextStyle(color: Colors.white)),
+                    )),
           ],
         ));
   }

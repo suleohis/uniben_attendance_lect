@@ -1,9 +1,9 @@
 class Student{
-  final String email;
-  final String firstname;
-  final String lastname;
-  final String matricNo;
-  final String img;
+  final String? email;
+  final String? firstname;
+  final String? lastname;
+  final String? matricNo;
+  final String? img;
 
   Student({this.email, this.firstname, this.lastname, this.matricNo, this.img});
 
@@ -12,7 +12,7 @@ class Student{
         email: json['email'],
         firstname: json['firstname'],
         lastname: json['lastname'],
-        matricNo: json['matric_no'],
+        matricNo: json['matricNo'],
         img: json['img']
     );
   }

@@ -1,9 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:uniben_attendance_lect/home/api_requests.dart';
 class LectureAttendees extends StatefulWidget {
-  final List attendees;
-  LectureAttendees({this.attendees});
+  final List? attendees;
+   LectureAttendees({this.attendees});
 
   @override
   _LectureAttendeesState createState() => _LectureAttendeesState();
@@ -16,28 +15,28 @@ class _LectureAttendeesState extends State<LectureAttendees> {
     return Scaffold(
         appBar: AppBar(
             automaticallyImplyLeading: false,
-            title: Text('Lecture Attendees'),
+            title: const Text('Lecture Attendees'),
             leading: BackButton(
               onPressed: (){
                 Navigator.of(context).pop();
               },
             )
         ),
-        body: widget.attendees.isEmpty ? Center(
+        body: widget.attendees!.isEmpty ? Center(
           child: Container(
               margin: const EdgeInsets.only(left: 16, right: 16),
-              child: Text('No students have attended this lecturer yet')
+              child: const Text('No students have attended this lecturer yet')
           ),
         ) : ListView.builder(
-          itemCount: widget.attendees.length,
-          physics: AlwaysScrollableScrollPhysics(),
+          itemCount: widget.attendees!.length,
+          physics: const AlwaysScrollableScrollPhysics(),
           itemBuilder: (context, index){
             return FutureBuilder(
               future:  FirebaseFirestore.instance
                     .collection('students')
-                .doc(widget.attendees[index])
+                .doc(widget.attendees![index])
                 .get(),
-              builder: (context, snap){
+              builder: (context,AsyncSnapshot<dynamic> snap){
                 if(snap.hasData){
                   return ListTile(
                     title: Text('${snap.data['firstname']} ${snap.data['lastname']}'),

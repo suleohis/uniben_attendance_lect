@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Lecturer{
-  final String id;
-  final List lectures;
-  final String email;
-  final String username;
-  final String name;
+  final String? id;
+  final List? lectures;
+  final String? email;
+  final String? username;
+  final String? name;
 
   Lecturer({this.id, this.lectures, this.email, this.username, this.name});
 

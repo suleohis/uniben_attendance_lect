@@ -1,14 +1,14 @@
 class Lecture{
 
-  final String createdAt;
-  final List attendees;
-  final String duration;
-  final String courseId;
-  final String courseName;
-  final String courseCode;
-  final String id;
-  final String session;
-  final String semester;
+  final String? createdAt;
+  final List? attendees;
+  final String? duration;
+  final String? courseId;
+  final String? courseName;
+  final String? courseCode;
+  final String? id;
+  final String? session;
+  final String? semester;
 
   Lecture({this.createdAt, this.attendees, this.duration, this.courseId,
       this.courseName, this.courseCode, this.id, this.session, this.semester});

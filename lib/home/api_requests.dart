@@ -6,44 +6,43 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uniben_attendance_lect/models/Lecture.dart';
 import 'package:uniben_attendance_lect/models/course.dart';
 import 'package:http/http.dart' as http;
-import 'package:uniben_attendance_lect/models/student.dart';
 
 final FirebaseAuth auth = FirebaseAuth.instance;
-String userId = auth.currentUser.uid;
+String userId = auth.currentUser!.uid;
 
-Future<List<Course>> fetchCourses() async {
-  SharedPreferences pref = await SharedPreferences.getInstance();
-  String token = pref.getString('token');
-
-  http.Client client = http.Client();
-  try{
-    http.Response response = await client.post(
-        Uri.https('serene-harbor-85025.herokuapp.com', '/lecturers/courses'),
-        body: json.encode({
-          "token": token
-        }),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-    );
-    dynamic decodedResponse = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
-    //print(decodedResponse);
-
-    List<Course> courses = [];
-    if(decodedResponse['status'] == 'ok'){
-      decodedResponse['courses'].forEach((course) {
-        courses.add(Course.fromJson(course));
-      });
-      return courses;
-    }else{
-      print(decodedResponse['msg']);
-      return null;
-    }
-
-  }catch(e){
-    print(e);
-  }
-}
+// Future<List<Course>?> fetchCourses() async {
+//   SharedPreferences pref = await SharedPreferences.getInstance();
+//   String? token = pref.getString('token');
+//
+//   http.Client client = http.Client();
+//   try{
+//     http.Response response = await client.post(
+//         Uri.https('serene-harbor-85025.herokuapp.com', '/lecturers/courses'),
+//         body: json.encode({
+//           "token": token
+//         }),
+//         headers: {
+//           'Content-Type': 'application/json'
+//         }
+//     );
+//     dynamic decodedResponse = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
+//     //print(decodedResponse);
+//
+//     List<Course> courses = [];
+//     if(decodedResponse['status'] == 'ok'){
+//       decodedResponse['courses'].forEach((course) {
+//         courses.add(Course.fromJson(course));
+//       });
+//       return courses;
+//     }else{
+//       print(decodedResponse['msg']);
+//       return null;
+//     }
+//
+//   }catch(e){
+//     print(e);
+//   }
+// }
 
 // function to fetch the code from db
 fetchCode(setStateCallback,List<Map<String,dynamic>>generateLecture, selectedCourse, duration, context, session, semester) async {
@@ -64,9 +63,9 @@ fetchCode(setStateCallback,List<Map<String,dynamic>>generateLecture, selectedCou
   }
 }
 
-Future<List<Lecture>> fetchLectures(session, semester) async {
+Future<List<Lecture>?>? fetchLectures(session, semester) async {
   SharedPreferences pref = await SharedPreferences.getInstance();
-  String token = pref.getString('token');
+  String ?token = pref.getString('token');
 
   http.Client client = http.Client();
   try{
