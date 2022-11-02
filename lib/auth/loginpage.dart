@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uniben_attendance_lect/auth/forget%20password.dart';
+import 'package:uniben_attendance_lect/auth/signuppage.dart';
 import 'package:uniben_attendance_lect/home/homepage.dart';
 import 'package:uniben_attendance_lect/models/lecturer.dart';
 
@@ -125,6 +126,24 @@ class _LoginState extends State<Login> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
+                            const Text('Don\'t have an account?', style: TextStyle()),
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).push(MaterialPageRoute(builder:
+                                      (_)=> const SignUp()));
+                                },
+                                child: const Text('Sign Up', style: TextStyle(color: Colors.yellow))
+                            )
+                          ],
+                        ),
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width / 1.2,
+                        margin: const EdgeInsets.only(top: 12),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
                             const Text('I Forgot Must Password? ',
                                 style: TextStyle()),
                             TextButton(
@@ -221,6 +240,10 @@ class _LoginState extends State<Login> {
                     pref.setBool('logged_in', true);
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => const HomePage()));
+                  }).catchError((e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Login Failed'))
+                    );
                   });
                 }).then((value) {
                   setState(() {
@@ -244,19 +267,33 @@ class _LoginState extends State<Login> {
                 Navigator.of(context).push(
                     MaterialPageRoute(builder: (context) => const HomePage()));
               }
+            }).catchError((e) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Login Failed'))
+              );
             });
           } else {
             setState(() {
               isLoading = false;
             });
           }
+        }).catchError((e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Login Failed'))
+          );
         });
       }).catchError((e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Login Failed'))
+        );
         setState(() {
           isLoading = false;
         });
       });
     } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Login Failed'))
+      );
       setState(() {
         isLoading = false;
       });

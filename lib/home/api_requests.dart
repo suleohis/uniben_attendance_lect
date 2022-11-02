@@ -7,8 +7,51 @@ import 'package:uniben_attendance_lect/models/Lecture.dart';
 import 'package:uniben_attendance_lect/models/course.dart';
 import 'package:http/http.dart' as http;
 
+import 'homepage.dart';
+
 final FirebaseAuth auth = FirebaseAuth.instance;
 String userId = auth.currentUser!.uid;
+
+Future signUpRequest(email, password,firstName,lastName,context) async {
+  SharedPreferences pref = await SharedPreferences.getInstance();
+
+  try{
+    auth.createUserWithEmailAndPassword(
+        email: email, password: password).then((UserCredential value) {
+
+      FirebaseFirestore.instance.collection('lecturers').
+      doc(auth.currentUser!.uid.toString()).set({
+        'courses': [],
+        "email": email,
+        'generateLecture': [],
+        'firstname':firstName,
+        'lastname':lastName,
+        'name': firstName + ' ' +  lastName,
+        'username': '',
+        'img': '',
+        'lectures_attend':[],
+        'isLecturer':true,
+        'id':auth.currentUser!.uid,
+
+      }).then((value) {
+        pref.setString('name',firstName + lastName);
+        pref.setString('lastname', lastName);
+        pref.setString('username', '');
+        pref.setString('email',email);
+        pref.setBool('logged_in', true);
+        Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const HomePage()));
+      });
+    });
+    print('done with signUp');
+  }catch(e){
+    ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Failure To Sign Up')));
+    print(e.toString());
+  }
+}
+
 
 // Future<List<Course>?> fetchCourses() async {
 //   SharedPreferences pref = await SharedPreferences.getInstance();

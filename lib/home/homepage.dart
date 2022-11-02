@@ -56,7 +56,7 @@ class _HomePageState extends State<HomePage> {
           String? id = prefs.getString('id');
           String? email = prefs.getString('email');
 
-          user = Lecturer(name: name!, id: id!, username: username!, email: email!);
+          user = Lecturer(name: name, id: id, username: username!, email: email!);
           setState(() {
             isLoading = false;
           });
