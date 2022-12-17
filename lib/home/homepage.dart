@@ -362,7 +362,7 @@ class _HomePageState extends State<HomePage> {
                             child: StreamBuilder(
                               stream:  FirebaseFirestore.instance
                                   .collection('lecturers')
-                                  .doc(auth.currentUser!.uid)
+                                  .doc(auth.currentUser!.uid ?? '')
                                   .snapshots(),
                               builder: (context,AsyncSnapshot<DocumentSnapshot> snapshot) {
                                 if(snapshot.hasData){
