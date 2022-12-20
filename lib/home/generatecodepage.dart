@@ -131,56 +131,60 @@ class _GenerateCodeState extends State<GenerateCode> {
                 )),
             Container(
                 margin: const EdgeInsets.only(top: 10, left: 16, right: 16),
-                child: Row(
-                  children: [
-                    const Text('Select course:   '),
-                  selectedCourse == null ?  StreamBuilder(
-                      stream:  FirebaseFirestore.instance.collection('courses')
-                          .doc(level)
-                          .collection(semesterD).snapshots(),
-                      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                child: SingleChildScrollView(
+                  child: Row(
+                    children: [
+                      const Text('Select course:   '),
+                    if (selectedCourse == null) StreamBuilder(
+                        stream:  FirebaseFirestore.instance.collection('courses')
+                            .doc(level)
+                            .collection(semesterD).snapshots(),
+                        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
 
-                        if(snapshot.hasData ){
-                          futureCourses!.clear();
-                          snapshot.data!.docs.map((elemnt){
-                            print(elemnt.data());
-                            futureCourses!.add(Course.fromSnap(elemnt));
-                            print(futureCourses!.last.courseCode);
-                          }).toList();
-                          return DropdownButton<Course>(
-                            value: selectedCourse,
-                            // set default text to be the most recent selction
-                            // items: [
-                            // DropdownMenuItem<Course>(
-                            //   value: futureCourses![0],
-                            //   child: Text(futureCourses![0].title.toString()),
-                            // )
-                            // ],
-                            items:futureCourses!.map((e) => DropdownMenuItem<Course>(
-                              value: e,
-                              child: Text(e.title.toString()),
-                            )).toList(),
-                            onChanged: (course) {
-                              selectedCourse = course;
-                              setState(() {});
-                              // save the selected course details to shared preferences
-                            },
-                          );
-                        }else{
-                          return const SizedBox();
-                        }
+                          if(snapshot.hasData ){
+                            futureCourses!.clear();
+                            snapshot.data!.docs.map((elemnt){
+                              print(elemnt.data());
+                              futureCourses!.add(Course.fromSnap(elemnt));
+                              print(futureCourses!.last.courseCode);
+                            }).toList();
+                            return SizedBox(
+                              width: MediaQuery.of(context).size.width /2  - 20,
+                              child: DropdownButton<Course>(
+                                value: selectedCourse,
+                                // set default text to be the most recent selction
+                                // items: [
+                                // DropdownMenuItem<Course>(
+                                //   value: futureCourses![0],
+                                //   child: Text(futureCourses![0].title.toString()),
+                                // )
+                                // ],
+                                items:futureCourses!.map((e) => DropdownMenuItem<Course>(
+                                  value: e,
+                                  child: Text(e.title.toString()),
+                                )).toList(),
+                                onChanged: (course) {
+                                  selectedCourse = course;
+                                  setState(() {});
+                                  // save the selected course details to shared preferences
+                                },
+                              ),
+                            );
+                          }else{
+                            return const SizedBox();
+                          }
 
-                      },
+                        },
 
-                    )
-                      : GestureDetector(
-                      onTap: (){
-                        setState(() {
-                          selectedCourse = null;
-                        });
-                      },
-                      child: Text(selectedCourse!.title!,))
-                  ],
+                      ) else GestureDetector(
+                        onTap: (){
+                          setState(() {
+                            selectedCourse = null;
+                          });
+                        },
+                        child: Text(selectedCourse!.title!,))
+                    ],
+                  ),
                 )),
             Container(
                 margin: const EdgeInsets.only(top: 10, left: 16, right: 16),

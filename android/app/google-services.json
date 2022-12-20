@@ -1,40 +1,40 @@
 {
   "project_info": {
-    "project_number": "497763609499",
-    "project_id": "attentance-bfd91",
-    "storage_bucket": "attentance-bfd91.appspot.com"
+    "project_number": "721444744465",
+    "project_id": "attendance-d3a8e",
+    "storage_bucket": "attendance-d3a8e.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:497763609499:android:7751125a24ed3223a94f3e",
+        "mobilesdk_app_id": "1:721444744465:android:d6ea01851dad28b58130b0",
         "android_client_info": {
           "package_name": "com.example.uniben_attendance_lect"
         }
       },
       "oauth_client": [
         {
-          "client_id": "497763609499-b97gda6aui93k51bn6hluk47u7u1k9il.apps.googleusercontent.com",
+          "client_id": "721444744465-2ma62e3a7ujtstjo6fqn534kn4av5mh3.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAnoX3nO3xyID2sznFMIW_u5xwVimADXy4"
+          "current_key": "AIzaSyC3fgrZiDjEhXyg0R0zq98ChojeFh9LAKQ"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "497763609499-b97gda6aui93k51bn6hluk47u7u1k9il.apps.googleusercontent.com",
+              "client_id": "721444744465-2ma62e3a7ujtstjo6fqn534kn4av5mh3.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "497763609499-1p4clr2jlk835lvh8vif7icg9eh0cb1k.apps.googleusercontent.com",
+              "client_id": "721444744465-brt1h8mst16i6o4oltrcu6vsmv6nn3lh.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.unibenAttendanceLect"
+                "bundle_id": "com.example.unibenAttendanceStud"
               }
             }
           ]
@@ -43,34 +43,34 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:497763609499:android:1f6f7afea9029393a94f3e",
+        "mobilesdk_app_id": "1:721444744465:android:4e787181246880d08130b0",
         "android_client_info": {
           "package_name": "com.example.uniben_attendance_stud"
         }
       },
       "oauth_client": [
         {
-          "client_id": "497763609499-b97gda6aui93k51bn6hluk47u7u1k9il.apps.googleusercontent.com",
+          "client_id": "721444744465-2ma62e3a7ujtstjo6fqn534kn4av5mh3.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAnoX3nO3xyID2sznFMIW_u5xwVimADXy4"
+          "current_key": "AIzaSyC3fgrZiDjEhXyg0R0zq98ChojeFh9LAKQ"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "497763609499-b97gda6aui93k51bn6hluk47u7u1k9il.apps.googleusercontent.com",
+              "client_id": "721444744465-2ma62e3a7ujtstjo6fqn534kn4av5mh3.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "497763609499-1p4clr2jlk835lvh8vif7icg9eh0cb1k.apps.googleusercontent.com",
+              "client_id": "721444744465-brt1h8mst16i6o4oltrcu6vsmv6nn3lh.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.unibenAttendanceLect"
+                "bundle_id": "com.example.unibenAttendanceStud"
               }
             }
           ]
